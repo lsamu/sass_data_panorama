@@ -1,160 +1,91 @@
 <template>
-  <div class="editor-view">
-    <div class="topbar-view">
-      <Topbar></Topbar>
-    </div>
-    <div class="toolbar-view" v-show="!project.thatData.preview">
-      <Toolbar></Toolbar>
-    </div>
-    <div class="config-view" v-show="!project.thatData.preview">
-      <Config></Config>
-    </div>
-    <div class="scale-view">
-      <ScaleBar></ScaleBar>
-    </div>
-    <div class="main-view">
-      <Canvas :scale="project.thatData.scale" ref="refScreenContainer"></Canvas>
-    </div>
-  </div>
+    <!-- <div class="box-editor-container" @contextmenu.prevent.stop="">
+        <el-container style="height: calc(100vh)">
+            <el-header height="50px" style="padding:0">
+                <box-top :option="{ 'title': 'H5微场景系统' }"></box-top>
+            </el-header>
+            <el-container style="height: calc(100vh)">
+                <el-main style="padding:0">
+                    <splitpanes class="default-theme">
+                        <pane :size="20" :minSize="10" :maxSize="50">
+                            <box-editor-toolbox></box-editor-toolbox>
+                        </pane>
+                        <pane>
+                            <box-editor-page-drag></box-editor-page-drag>
+                        </pane>
+                        <pane :size="20" :minSize="10" :maxSize="50">
+                            <box-editor-property-layout-drag></box-editor-property-layout-drag>
+                        </pane>
+                    </splitpanes>
+                </el-main>
+            </el-container>
+        </el-container>
+    </div> -->
+    <box-editor-toolbox></box-editor-toolbox>
 </template>
-<script lang="ts">
-import {
-  defineComponent,
-  onMounted,
-  getCurrentInstance,
-  computed,
-  reactive,
-  ref,
-  toRef,
-  toRefs,
-} from "@vue/composition-api";
+<script lang="ts" setup>
 
-import Topbar from "./header.vue";
-import Toolbar from "./toolbox.vue";
-import Config from "./property.vue";
-import ScaleBar from "./scaleBar.vue";
-import Canvas from "./canvas.vue";
-import html2canvas from "html2canvas";
-import { saveAs } from "file-saver";
-import {useInjector, useProvider,useProviders} from '../utils/hook'
-import { useProjectState } from "./state/useProjectState";
-import { useHistoryState } from "./state/useHistoryState";
+// import BoxTop from "@/components/editor/layout/top.vue";
+// import Splitpanes from "@/components/editor/layout/splitpanes/splitpanes.vue";
+// import Pane from "@/components/editor/layout/splitpanes/pane.vue";
+// import "splitpanes/dist/splitpanes.css";
+// import cc from './components'
+// import {componentStore} from "@/components/editor/hook/componentStore"
 
-export default defineComponent({
-  components: {
-    Canvas,
-    Topbar,
-    Toolbar,
-    Config,
-    ScaleBar,
-  },
-  setup() {
-    const root = getCurrentInstance();
-    const that = root.proxy;
+const root = getCurrentInstance();
+const that = root.proxy;
 
-    const thatData = reactive({
-      
-    });
+const project = that["$project"] as any;
+// const component = componentStore();
+// component.load(cc)
 
-    useProviders(useProjectState,useHistoryState);
-
-    const project = useInjector(useProjectState);
-
-    const refScreenContainer = function() {
-      return (that.$refs["refScreenContainer"] as any).$refs["screen"] as any;
-    };
-
-    const saveChartData = async function() {
-      const dataURL = await generateScreenShot();
-      console.log(dataURL);
-      console.log("保存成功");
-    };
-
-    const generateData = function(item: any) {};
-
-    const generateScreenShot = async function() {
-      const canvas = await html2canvas(refScreenContainer(), {
-        backgroundColor: "#142E48",
-      });
-      let dataURL = canvas.toDataURL("image/png");
-      return dataURL;
-    };
-
-    //导出图片
-    const exportChartSnap = async function() {
-      var img = await generateScreenShot();
-      var alink = document.createElement("a");
-      alink.href = img;
-      alink.download = "screen.png";
-      alink.click();
-    };
-
-    const htmlTemplate = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Document</title><style>*{ padding:0;margin:0;}#container{overflow:hidden;width:100%;height:0;position:absolute;padding-top:#{containerPaddingTop}#}</style></head>
-<body><div id="container">#{containerInnerHtml}#</div></body></html>`;
-
-    const exportH5 = function() {
-      const finalHtmlCode = htmlTemplate.replace("#{containerInnerHtml}", "");
-      const htmlBolb = new Blob([finalHtmlCode], { type: "text/html" });
-      saveAs(htmlBolb, "index.html");
-    };
-
-    const exportPDF = function(){
-     
-    }
-
-    return {
-      saveChartData,
-      thatData,
-      generateData,
-      generateScreenShot,
-      exportChartSnap,
-      exportH5,
-      exportPDF,
-      project
-    };
-  },
-});
 </script>
 <style lang="scss" scoped>
-.editor-view {
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-}
-.topbar-view {
-  position: absolute;
-  height: 60px;
-  width: 100vw;
-  z-index: 1000;
-}
-.toolbar-view {
-  position: absolute;
-  top: 60px;
-  width: 50px;
-  bottom: 0;
-  z-index: 1000;
-}
-.config-view {
-  position: absolute;
-  right: 0;
-  top: 60px;
-  width: 300px;
-  bottom: 0;
-  z-index: 1000;
-}
-.scale-view {
-  position: absolute;
-  right: 316px;
-  bottom: 16px;
-  z-index: 1000;
-  &.preview {
-    right: 40px;
-  }
-}
-.main-view {
-  background: #eeeeee;
-  padding: 60px 300px 0 50px;
-  overflow: hidden;
-  height: calc(100vh - 60px);
+.box-editor-container {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+
+    .topbar-view {
+        position: absolute;
+        height: 60px;
+        width: 100vw;
+        z-index: 1000;
+    }
+
+    .toolbar-view {
+        position: absolute;
+        top: 60px;
+        width: 300px;
+        bottom: 0;
+        z-index: 1000;
+    }
+
+    .config-view {
+        position: absolute;
+        right: 0;
+        top: 60px;
+        width: 300px;
+        bottom: 0;
+        z-index: 1000;
+    }
+
+    .scale-view {
+        position: absolute;
+        right: 316px;
+        bottom: 16px;
+        z-index: 1000;
+
+        &.preview {
+            right: 40px;
+        }
+    }
+
+    .main-view {
+        background: #eeeeee;
+        padding: 60px 300px 0 300px;
+        overflow: hidden;
+        height: calc(100vh);
+    }
 }
 </style>

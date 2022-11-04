@@ -1,38 +1,34 @@
-import Vue from "vue";
-import VueCompositionAPI from "@vue/composition-api";
-Vue.use(VueCompositionAPI);
+import Vue from 'vue';
 
-import App from "./App.vue";
-import router from "./router";
-import store from "./store";
+import App from './App.vue';
+import router from './router'
+import store from './store'
 
-import ElementUI from "element-ui";
-import "element-ui/lib/theme-chalk/index.css";
-Vue.use(ElementUI, { size: "mini" });
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+Vue.use(ElementUI, { size: 'mini' });
 
-import VCharts from "v-charts";
-Vue.use(VCharts);
+import 'vue-awesome/icons'
+import Icon from 'vue-awesome/components/Icon'
+Vue.component('v-icon', Icon)
 
-import "vue-awesome/icons";
-import Icon from "vue-awesome/components/Icon";
-Vue.component("v-icon", Icon);
+import BoxUI from "@lauxinyi/box-ui";
+import "@lauxinyi/box-ui/dist/style.css"
+Vue.use(BoxUI, { option: true });
 
-import BoxUI from "../lib/box-ui/box-ui.min.js";
-import "../lib/box-ui/style.css";
-Vue.use(BoxUI);
+import BoxEditor, { projectStore } from "@lauxinyi/box-editor"
+import "@lauxinyi/box-editor/dist/style.css"
+Vue.use(BoxEditor, { option: true });
 
-import  BoxEchart from './components/echart/main';
-Vue.use(BoxEchart);
+import BoxEChart from "./components/main";
+import "./components/style.scss"
+Vue.use(BoxEChart, { option: true });
 
-import VueDraggableResizable from "vue-draggable-resizable-gorkys";
-import "vue-draggable-resizable-gorkys/dist/VueDraggableResizable.css";
-
-Vue.component('vue-draggable-resizable', VueDraggableResizable);
+import pinia from "./store/pinia"
+Vue.prototype.$project = projectStore(pinia);
 
 new Vue({
   router,
-  store,
+  pinia,
   render: (h) => h(App),
-}).$mount("#app");
-
-document.title = "360全景可视化"
+}).$mount('#app');
